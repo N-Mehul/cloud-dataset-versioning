@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cloud Dataset Versioning</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--border:#e3e8f0;--blue:#2457d6;--blue-dark:#1744b5;--green:#16845b;--red:#b42318;--nav:#14213d;--shadow:0 8px 28px rgba(26,43,77,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5}
+.app{display:flex;min-height:100vh}.sidebar{width:250px;background:var(--nav);color:#fff;padding:24px 16px;flex-shrink:0}.brand{font-size:20px;font-weight:800;line-height:1.25;padding:0 10px}.brand small{display:block;color:#c8d4ea;font-size:12px;font-weight:500;margin-top:8px}.nav-label{color:#aebbd2;font-size:11px;text-transform:uppercase;letter-spacing:1.3px;margin:30px 10px 10px}.nav-link{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;color:#dce5f5;border:0;border-radius:10px;padding:12px 13px;margin:5px 0;cursor:pointer;font:inherit;font-size:14px;font-weight:650}.nav-link:hover,.nav-link.active{background:#29416c;color:#fff}.nav-icon{width:22px;text-align:center;font-size:17px}.side-note{font-size:12px;color:#bdc9dd;margin:32px 10px 0;line-height:1.6}.main-area{min-width:0;flex:1}.topbar{background:#fff;border-bottom:1px solid var(--border);padding:18px 30px;display:flex;align-items:center;justify-content:space-between;gap:12px}.topbar .eyebrow{color:var(--blue);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px}.topbar h1{font-size:23px;margin:2px 0 0}.cloud-status{font-size:12px;color:var(--green);background:#e8f7ef;padding:7px 11px;border-radius:999px;font-weight:750;white-space:nowrap}.content{padding:28px;max-width:1400px;margin:0 auto}.page{display:none}.page.active{display:block}.intro{color:var(--muted);margin:0 0 22px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card,.panel{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--shadow)}.card{padding:18px}.card-label{color:var(--muted);font-size:13px}.card-value{font-size:26px;font-weight:780;margin-top:8px;overflow-wrap:anywhere}.card-value.file{font-size:17px}.panel{margin-top:20px;padding:22px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}h2{margin:0;font-size:18px}.muted{color:var(--muted);font-size:13px}.status{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:750;background:#e8f7ef;color:#126943}.status:before{content:"";width:7px;height:7px;background:currentColor;border-radius:50%}.status.error{background:#fff0ef;color:var(--red)}.status.pending{background:#fff6df;color:#8a5a00}.controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}label{display:block;font-size:13px;font-weight:700;margin:12px 0 7px}select,input[type=file]{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:var(--text);font:inherit;font-size:13px}button.action{margin:12px 8px 0 0;border:0;border-radius:9px;padding:11px 16px;background:var(--blue);color:#fff;font:inherit;font-weight:750;cursor:pointer;min-height:42px}button.action:hover{background:var(--blue-dark)}button:disabled{opacity:.6;cursor:wait}.secondary{background:#e9efff!important;color:#1d3f99!important}.secondary:hover{background:#dbe5ff!important}.message{margin-top:12px;font-size:13px;color:var(--muted);overflow-wrap:anywhere}.table-wrap{width:100%;overflow-x:auto;margin-top:14px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--border)}th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;background:#f8fafc}.change-added{color:var(--green);font-weight:800}.change-removed{color:var(--red);font-weight:800}.empty{color:var(--muted);text-align:center;padding:22px 10px}.welcome{background:linear-gradient(120deg,#182b50,#2854a1);color:#fff;padding:26px;border-radius:16px;margin-bottom:20px}.welcome h2{font-size:25px;margin-bottom:6px}.welcome p{color:#d7e3f7;margin:0;max-width:700px}.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}.quick-card{border:1px solid var(--border);background:#fff;border-radius:14px;padding:18px}.quick-card .symbol{font-size:24px}.quick-card h3{font-size:15px;margin:10px 0 5px}.quick-card p{font-size:13px;color:var(--muted);margin:0}.footer{color:var(--muted);font-size:12px;text-align:center;margin:28px 0 4px}
+@media(max-width:900px){.sidebar{width:210px}.content{padding:20px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.quick-grid{grid-template-columns:1fr}}@media(max-width:640px){.app{display:block}.sidebar{width:100%;padding:14px}.brand{padding:0 6px}.nav-label,.side-note{display:none}.nav-list{display:flex;gap:5px;margin-top:14px;overflow-x:auto}.nav-link{white-space:nowrap;width:auto;flex-shrink:0;margin:0;padding:10px}.topbar{padding:16px;align-items:flex-start}.topbar h1{font-size:19px}.cloud-status{font-size:10px}.content{padding:16px}.controls{grid-template-columns:1fr}.panel{padding:16px}.card{padding:14px}.card-value{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">Cloud Dataset<br>Versioning<small>Manage · Compare · Validate</small></div>
+  <div class="nav-label">Workspace</div>
+  <nav class="nav-list" aria-label="Dashboard navigation">
+    <button class="nav-link active" data-page="overviewPage" data-title="Overview"><span class="nav-icon">▦</span>Overview</button>
+    <button class="nav-link" data-page="versionsPage" data-title="Version Management"><span class="nav-icon">⟳</span>Version Management</button>
+    <button class="nav-link" data-page="qualityPage" data-title="Data Quality"><span class="nav-icon">✓</span>Data Quality</button>
+  </nav>
+  <div class="side-note">Cloud-based dataset version control using Amazon S3, AWS Lambda, API Gateway and DynamoDB.</div>
+</aside>
+<div class="main-area">
+  <header class="topbar"><div><div class="eyebrow">Cloud workspace</div><h1 id="pageTitle">Overview</h1></div><span class="cloud-status">● AWS dashboard</span></header>
+  <main class="content">
+    <section class="page active" id="overviewPage">
+      <div class="welcome"><h2>Dataset control centre</h2><p>Upload datasets, keep previous versions, compare changes, and check data quality from one simple cloud dashboard.</p></div>
+      <div class="grid" aria-label="Dataset summary">
+        <div class="card"><div class="card-label">Dataset</div><div class="card-value file">customer_dataset.csv</div></div>
+        <div class="card"><div class="card-label">Old version records</div><div class="card-value" id="oldCount">—</div></div>
+        <div class="card"><div class="card-label">New version records</div><div class="card-value" id="newCount">—</div></div>
+        <div class="card"><div class="card-label">Records added</div><div class="card-value" id="addedCount">—</div></div>
+      </div>
+      <div class="quick-grid">
+        <div class="quick-card"><div class="symbol">⟳</div><h3>Version Management</h3><p>Upload a CSV, refresh saved versions, and compare any two S3 versions.</p><button class="action" type="button" data-go-page="versionsPage">Manage versions</button></div>
+        <div class="quick-card"><div class="symbol">✓</div><h3>Data Quality</h3><p>Inspect missing cells, duplicate rows, empty columns and invalid age values.</p><button class="action" type="button" data-go-page="qualityPage">Analyze quality</button></div>
+        <div class="quick-card"><div class="symbol">☁</div><h3>Version protection</h3><p>Older dataset versions remain available in the version-enabled S3 bucket.</p><button class="action secondary" type="button" data-go-page="versionsPage">View versions</button></div>
+      </div>
+      <div class="panel"><div class="panel-head"><h2>How the system works</h2><span class="muted">Live API connection</span></div><p class="muted">Dashboard → API Gateway → Lambda → Amazon S3 for dataset versions and DynamoDB for comparison history.</p><button class="action secondary" id="overviewRefresh" type="button">Refresh version data</button><div id="overviewStatus" class="message">Loading saved versions…</div></div>
+    </section>
+    <section class="page" id="versionsPage">
+      <p class="intro">Upload a CSV file or compare two saved versions of <strong>customer_dataset.csv</strong>. Uploaded files are stored under the fixed S3 object key while their original filenames are retained in metadata.</p>
+      <section class="panel" style="margin-top:0">
+        <div class="panel-head"><h2>Upload a new dataset version</h2><span class="muted">CSV · Maximum 500 KB</span></div>
+        <label for="csvFile">Choose CSV file</label><input type="file" id="csvFile" accept=".csv,text/csv" />
+        <button class="action" id="uploadButton" type="button">Upload CSV</button><button class="action secondary" id="refreshButton" type="button">Refresh Versions</button>
+        <div id="uploadStatus" class="message" role="status">Ready to upload.</div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Compare dataset versions</h2><span id="status" class="status pending">Loading versions</span></div>
+        <p class="muted">Choose two different saved S3 versions. The comparison is processed by Lambda and saved to DynamoDB.</p>
+        <div class="controls"><div><label for="oldVersion">Old version</label><select id="oldVersion"><option value="">Loading versions…</option></select></div><div><label for="newVersion">New version</label><select id="newVersion"><option value="">Loading versions…</option></select></div></div>
+        <button class="action" id="compareButton" type="button">Compare Versions</button><div id="message" class="message" role="status">Loading saved S3 versions…</div>
+      </section>
+      <section class="panel"><div class="panel-head"><h2>Comparison result</h2><span id="resultId" class="muted"></span></div>
+        <div class="table-wrap"><table><thead><tr><th>Change</th><th>Customer ID</th><th>Name</th><th>Age</th><th>City</th></tr></thead><tbody id="resultsBody"><tr><td colspan="5" class="empty">No comparison has been run in this session.</td></tr></tbody></table></div>
+        <p id="removedSummary" class="muted">Removed records: —</p><p id="comparedAt" class="muted"></p>
+      </section>
+    </section>
+    <section class="page" id="qualityPage">
+      <p class="intro">Analyze the latest uploaded CSV version for common data quality issues.</p>
+      <section class="panel" style="margin-top:0"><div class="panel-head"><h2>Dataset Quality Analyzer</h2><span id="qualityBadge" class="status pending">Not analyzed</span></div>
+        <p class="muted">Check missing values, duplicate rows, empty columns, and invalid age values.</p><button class="action" id="qualityButton" type="button">Analyze Dataset Quality</button>
+        <div id="qualityMessage" class="message" role="status">Click the button to analyze the latest S3 dataset version.</div>
+        <div class="grid" style="margin-top:14px"><div class="card"><div class="card-label">Quality score</div><div class="card-value" id="qualityScore">—</div></div><div class="card"><div class="card-label">Missing cells</div><div class="card-value" id="missingCells">—</div></div><div class="card"><div class="card-label">Duplicate rows</div><div class="card-value" id="duplicateRows">—</div></div><div class="card"><div class="card-label">Rows / columns</div><div class="card-value file" id="qualityDimensions">—</div></div></div>
+        <p id="qualityDetails" class="muted"></p>
+      </section>
+    </section>
+    <div class="footer">Cloud Dataset Versioning · Demonstration project · Do not upload sensitive data</div>
+  </main>
+</div>
+</div>
+<script>
+
+  const API_BASE = "https://hljxz0lyx6.execute-api.ap-south-1.amazonaws.com";
+  const oldSelect = document.getElementById("oldVersion");
+  const newSelect = document.getElementById("newVersion");
+  const statusBadge = document.getElementById("status");
+  const message = document.getElementById("message");
+  const uploadStatus = document.getElementById("uploadStatus");
+  const uploadButton = document.getElementById("uploadButton");
+  const compareButton = document.getElementById("compareButton");
+  function setStatus(text, kind) {
+    statusBadge.textContent = text;
+    statusBadge.className = "status" + (kind ? " " + kind : "");
+  }
+  function cellText(value) {
+    return value === undefined || value === null || value === "" ? "—" : String(value);
+  }
+  async function readJsonResponse(response) {
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || data.message || `HTTP ${response.status}`);
+    if (data && typeof data.body === "string") {
+      try { return JSON.parse(data.body); } catch (_) {}
+    }
+    return data;
+  }
+  async function loadVersions() {
+    setStatus("Loading versions", "pending");
+    message.textContent = "Loading saved S3 versions…";
+    try {
+      const response = await fetch(`${API_BASE}/versions`);
+      const data = await readJsonResponse(response);
+      const versions = Array.isArray(data.versions) ? data.versions : [];
+      oldSelect.replaceChildren();
+      newSelect.replaceChildren();
+      if (versions.length === 0) {
+        oldSelect.add(new Option("No versions found", ""));
+        newSelect.add(new Option("No versions found", ""));
+        setStatus("No versions", "error");
+        message.textContent = "No versions found for customer_dataset.csv.";
+        return;
+      }
+      versions.forEach(v => {
+        const date = v.last_modified
+          ? new Date(v.last_modified).toLocaleString()
+          : "date unknown";
+        const filename = v.filename || "customer_dataset.csv";
+        const shortId = v.version_id
+          ? `${v.version_id.slice(0, 5)}...${v.version_id.slice(-5)}`
+          : "unknown";
+        const label = `${v.is_latest ? "LATEST · " : ""}${filename} · ${date} · ID: ${shortId}`;
+        oldSelect.add(new Option(label, v.version_id));
+        newSelect.add(new Option(label, v.version_id));
+      });
+      if (versions.length >= 2) {
+        oldSelect.selectedIndex = 1;
+        newSelect.selectedIndex = 0;
+        setStatus("Ready to compare", "");
+        message.textContent = `${versions.length} saved version(s) loaded. Select two different versions.`;
+      } else {
+        oldSelect.selectedIndex = 0;
+        newSelect.selectedIndex = 0;
+        setStatus("One version only", "pending");
+        message.textContent = "Upload another CSV version before comparing.";
+      }
+    } catch (error) {
+      setStatus("Could not load versions", "error");
+      message.textContent = `Could not load S3 versions: ${error.message}`;
+    }
+  }
+  async function uploadDataset() {
+    const file = document.getElementById("csvFile").files[0];
+    if (!file) {
+      uploadStatus.textContent = "Please choose a CSV file first.";
+      return;
+    }
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      uploadStatus.textContent = "Please select a file with the .csv extension.";
+      return;
+    }
+    if (file.size > 500000) {
+      uploadStatus.textContent = "The CSV must be 500 KB or smaller.";
+      return;
+    }
+    uploadButton.disabled = true;
+    uploadStatus.textContent = "Reading and uploading CSV…";
+    try {
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1]);
+        reader.onerror = () => reject(new Error("Could not read the selected file."));
+        reader.readAsDataURL(file);
+      });
+      const response = await fetch(`${API_BASE}/upload`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, content_base64: base64 })
+      });
+      const data = await readJsonResponse(response);
+      uploadStatus.textContent = `Upload successful. ${data.record_count} records saved as a new S3 version.`;
+      document.getElementById("csvFile").value = "";
+      await loadVersions();
+    } catch (error) {
+      uploadStatus.textContent = `Upload failed: ${error.message}`;
+    } finally {
+      uploadButton.disabled = false;
+    }
+  }
+  function renderRows(added, removed) {
+    const rows = [
+      ...added.map(record => ({ change: "Added", record, className: "change-added" })),
+      ...removed.map(record => ({ change: "Removed", record, className: "change-removed" }))
+    ];
+    const tbody = document.getElementById("resultsBody");
+    tbody.replaceChildren();
+    if (!rows.length) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 5;
+      td.className = "empty";
+      td.textContent = "No records were added or removed.";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+    rows.forEach(item => {
+      const tr = document.createElement("tr");
+      const change = document.createElement("td");
+      change.textContent = item.change;
+      change.className = item.className;
+      tr.appendChild(change);
+      ["customer_id", "name", "age", "city"].forEach(field => {
+        const td = document.createElement("td");
+        td.textContent = cellText(item.record[field]);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+  async function compareVersions() {
+    const oldVersion = oldSelect.value;
+    const newVersion = newSelect.value;
+    if (!oldVersion || !newVersion || oldVersion === newVersion) {
+      setStatus("Invalid selection", "error");
+      message.textContent = "Choose two different dataset versions.";
+      return;
+    }
+    compareButton.disabled = true;
+    compareButton.textContent = "Comparing…";
+    setStatus("Comparing", "pending");
+    message.textContent = "Sending request to API Gateway…";
+    try {
+      const response = await fetch(`${API_BASE}/compare`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          key: "customer_dataset.csv",
+          old_version_id: oldVersion,
+          new_version_id: newVersion
+        })
+      });
+      const result = await readJsonResponse(response);
+      const added = Array.isArray(result.added_records) ? result.added_records : [];
+      const removed = Array.isArray(result.removed_records) ? result.removed_records : [];
+      document.getElementById("oldCount").textContent = cellText(result.old_record_count);
+      document.getElementById("newCount").textContent = cellText(result.new_record_count);
+      document.getElementById("addedCount").textContent = String(added.length);
+      document.getElementById("resultId").textContent = result.comparison_id ? `ID: ${result.comparison_id}` : "";
+      document.getElementById("removedSummary").textContent = `Removed records: ${removed.length}`;
+      document.getElementById("comparedAt").textContent = result.compared_at ? `Compared at: ${result.compared_at}` : "";
+      renderRows(added, removed);
+      setStatus("Comparison successful", "");
+      message.textContent = "Comparison completed by Lambda and saved to DynamoDB.";
+    } catch (error) {
+      setStatus("Comparison failed", "error");
+      message.textContent = `Could not complete comparison: ${error.message}. Check API Gateway CORS, routes, Lambda permissions, and CloudWatch logs.`;
+    } finally {
+      compareButton.disabled = false;
+      compareButton.textContent = "Compare Versions";
+    }
+  }
+  async function analyzeQuality() {
+    const button = document.getElementById("qualityButton");
+    const badge = document.getElementById("qualityBadge");
+    const message = document.getElementById("qualityMessage");
+    button.disabled = true;
+    badge.textContent = "Analyzing…";
+    badge.className = "status pending";
+    message.textContent = "Analyzing the latest dataset version…";
+    try {
+      const response = await fetch(`${API_BASE}/quality`);
+      const data = await readJsonResponse(response);
+      document.getElementById("qualityScore").textContent = `${data.quality_score}/100`;
+      document.getElementById("missingCells").textContent = data.missing_cells;
+      document.getElementById("duplicateRows").textContent = data.duplicate_rows;
+      document.getElementById("qualityDimensions").textContent = `${data.record_count} / ${data.column_count}`;
+      const details = [
+        `Empty columns: ${Array.isArray(data.empty_columns) && data.empty_columns.length ? data.empty_columns.join(", ") : "none"}`,
+        data.age_column_found ? `Invalid age values: ${data.invalid_age_values}` : "No age column detected"
+      ];
+      document.getElementById("qualityDetails").textContent = details.join(" · ");
+      badge.textContent = data.quality_score >= 90 ? "Good quality" : data.quality_score >= 70 ? "Needs review" : "Poor quality";
+      badge.className = "status" + (data.quality_score >= 90 ? "" : " pending");
+      message.textContent = `Analyzed version ${data.version_id} at ${new Date(data.analyzed_at).toLocaleString()}.`;
+    } catch (error) {
+      badge.textContent = "Analysis failed";
+      badge.className = "status error";
+      message.textContent = `Could not analyze dataset: ${error.message}`;
+    } finally {
+      button.disabled = false;
+    }
+  }
+  document.getElementById("qualityButton").addEventListener("click", analyzeQuality);
+  uploadButton.addEventListener("click", uploadDataset);
+  document.getElementById("refreshButton").addEventListener("click", loadVersions);
+  compareButton.addEventListener("click", compareVersions);
+  // Sidebar navigation: show one dashboard page at a time.
+  document.querySelectorAll(".nav-link").forEach(link => {
+    link.addEventListener("click", () => {
+      document.querySelectorAll(".nav-link").forEach(item => item.classList.remove("active"));
+      document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+      link.classList.add("active");
+      const target = document.getElementById(link.dataset.page);
+      if (target) target.classList.add("active");
+      const pageTitle = document.getElementById("pageTitle");
+      if (pageTitle) pageTitle.textContent = link.dataset.title;
+      if (link.dataset.page === "qualityPage") analyzeQuality();
+      if (link.dataset.page === "versionsPage") loadVersions();
+    });
+  });
+  document.querySelectorAll("[data-go-page]").forEach(button => {
+    button.addEventListener("click", () => {
+      const pageName = button.getAttribute("data-go-page");
+      const navButton = document.querySelector('.nav-link[data-page="' + pageName + '"]');
+      if (navButton) navButton.click();
+    });
+  });
+
+  window.addEventListener("DOMContentLoaded", loadVersions);
+
+  const originalLoadVersions = loadVersions;
+  document.getElementById("overviewRefresh").addEventListener("click", async () => {
+    await loadVersions();
+    const el = document.getElementById("overviewStatus");
+    el.textContent = document.getElementById("message").textContent;
+  });
+  // Mirror the version status on Overview without changing the API response.
+  const overviewStatus = document.getElementById("overviewStatus");
+  const statusObserver = new MutationObserver(() => { overviewStatus.textContent = message.textContent; });
+  statusObserver.observe(message, { childList: true, characterData: true, subtree: true });
+</script>
+</body>
+</html>
